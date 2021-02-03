@@ -11,13 +11,13 @@ from sqlalchemy import create_engine, func
 #################################################
 # Database Setup
 #################################################
-engine = create_engine("sqlite:///Resources/hawaii.sqlite")
+engine = create_engine("sqlite:///Resources/hawaii.sqlite", echo = False)
 
 #Reflect an existing database into a new model
 Base = automap_base()
 Base.prepare(engine, reflect = True)
 
-#Save reference to teh table
+#Save reference to the table
 Station = Base.classes.station
 Measurement = Base.classes.measurement
 
@@ -33,9 +33,9 @@ app = Flask(__name__)
 # Flask Routes
 #################################################
 
+
 @app.route("/")
 def intro():
-    """List all available api routes"""
     return(
         f"Available Routes:<br/>"
         f"/api/v1.0/precipitation<br/>"
@@ -89,8 +89,10 @@ def stations():
 @app.route("/api/v1.0/tobs")
 def tobs():
     session = Session(engine)
-    tobs_results = session.query(Measurement.station, Measurement.tobs).\
-        filter(Measurement.date.between('2016-08-23', '2017-08-23')).all()
+    sel = [Measurement.date]
+    last_date_str = session.query(*sel).order_by(Measurement.date.desc()).first()
+    last_date = dt.datetime.strptime(last_date_str[0], '%Y-%m-%d')
+    year_ago = last_date - dt.timedelta(365)
     session.close()
     
     list = []
@@ -98,8 +100,8 @@ def tobs():
         dict = {}
         dict["station"] = tobs[0]
         dict["tobs"] = float(tobs[1])
-        list.append(dict)
-    return jsonify(list)
+        tobs_list.append(dict)
+    return jsonify(tobs_list)
 
 #Return a JSON list of the minimum temperature, the average temperature, and the max temperature for a given start or start-end range.
 #When given the start only, calculate TMIN, TAVG, and TMAX for all dates greater than and equal to the start date.
