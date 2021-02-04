@@ -96,24 +96,27 @@ def tobs():
 
 #Return a JSON list of the minimum temperature, the average temperature, and the max temperature for a given start or start-end range.
 #When given the start only, calculate TMIN, TAVG, and TMAX for all dates greater than and equal to the start date.
-@app.route("/api/v1.0/<start>")
+@app.route("/api/v1.0/<start>") 
 def start(start):
+    session = Session(engine)
     start_results = session.query(func.min(Measurement.tobs), func.max(Measurement.tobs), func.avg(Measurement.tobs)).\
         filter(Measurement.date >= start).all()
+    session.close()
 
     calc_temps = list(np.ravel(start_results))
-    session.close() 
-
     return jsonify(calc_temps)
 
-#When given the start and the end date, calculate the TMIN, TAVG, and TMAX for dates between the start and end date inclusive.
+# When given the start and the end date, calculate the TMIN, TAVG, and TMAX for dates between the start and end date inclusive.
 @app.route("/api/v1.0/<start>/<end>")
 def end(start, end):
+    session = Session(engine)
     end_results = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).\
         filter(Measurement.date >= start).filter(Measurement.date <= end).all()
+    session.close()
 
     between_temps = list(np.ravel(end_results))
     return jsonify(between_temps)
 
-if __name__ == '__main__':
+# Define main behavior
+if __name__ == "__main__":
     app.run(debug=True)
