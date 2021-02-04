@@ -82,12 +82,10 @@ def stations():
 #Query the dates and temperature observations of the most active station for the last year of data.
 @app.route("/api/v1.0/tobs")
 def tobs():
-    session = Session(engine)
     year_ago = dt.date(2017,8,23) - dt.timedelta(days=365)
     year_temp = session.query(Measurement.tobs).\
         filter(Measurement.station == 'USC00519281').\
         filter(Measurement.date >= year_ago).all()
-    session.close()
 
 #Return a JSON list of temperature observations (TOBS) for the previous year.
     active_station = list(np.ravel(year_temp))
@@ -98,10 +96,8 @@ def tobs():
 #When given the start only, calculate TMIN, TAVG, and TMAX for all dates greater than and equal to the start date.
 @app.route("/api/v1.0/<start>") 
 def start(start):
-    session = Session(engine)
     start_results = session.query(func.min(Measurement.tobs), func.max(Measurement.tobs), func.avg(Measurement.tobs)).\
         filter(Measurement.date >= start).all()
-    session.close()
 
     calc_temps = list(np.ravel(start_results))
     return jsonify(calc_temps)
@@ -109,10 +105,8 @@ def start(start):
 # When given the start and the end date, calculate the TMIN, TAVG, and TMAX for dates between the start and end date inclusive.
 @app.route("/api/v1.0/<start>/<end>")
 def end(start, end):
-    session = Session(engine)
     end_results = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).\
         filter(Measurement.date >= start).filter(Measurement.date <= end).all()
-    session.close()
 
     between_temps = list(np.ravel(end_results))
     return jsonify(between_temps)
