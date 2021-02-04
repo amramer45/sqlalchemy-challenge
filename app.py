@@ -96,7 +96,7 @@ def tobs():
 @app.route("/api/v1.0/<start>") 
 def startfunc(start):
     start_results = session.query(func.min(Measurement.tobs), func.max(Measurement.tobs), func.avg(Measurement.tobs)).\
-        filter(Measurement.date >= start).all()
+        filter(Measurement.date > start).all()
 
     calc_temps = list(np.ravel(start_results))
     return jsonify(calc_temps)
