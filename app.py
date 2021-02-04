@@ -53,16 +53,15 @@ def precipitation():
     session = Session(engine)
     year_ago = dt.date(2017,8,23) - dt.timedelta(days=365)
     recent_date = session.query(Measurement.date).order_by(Measurement.date.desc()).first()
-    prcp_result = session.query(Measurement.date, Measurement.prcp).\
+    precipitation = session.query(Measurement.date, Measurement.prcp).\
         filter(Measurement.date > year_ago).order_by(Measurement.date).all()
     session.close()
 
 #Return the JSON representation of your dictionary.
     prcp_data = []
-    for date, prcp in prcp_result:
+    for date, prcp in precipitation:
         prcp_dict = {}
-        prcp_dict['date'] = date
-        prcp_dict['prcp'] = prcp
+        prcp_dict[date] = prcp
         prcp_data.append(prcp_dict)
 
     return jsonify(prcp_data)
