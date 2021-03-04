@@ -8,7 +8,7 @@ Use Python and SQLAlchemy to do basic climate analysis and data exploration of y
 
 ### Precipitation
 
-![Precipitation](Output/prcp.png)
+![Precipitation](Output/Prcp.png)
 
 ### Statistical Summary
 
@@ -30,7 +30,7 @@ Sorting the station with the most results and ploting the temperatures observed.
 
 ### Plotting the min, avg, and max temperature from a previous query as a bar chart.
 
-![trip average temp](./images/trip_avg_temp.png)
+![trip average temp](Output/trip_avg_temp.png)
 
 
 ### Area plot for the daily normals of days for a planned vacation
